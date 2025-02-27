@@ -101,6 +101,7 @@ def runner(
 
         done_embeddings = embed_task_dir.joinpath(".done.embeddings")
         if os.path.exists(done_embeddings):
+            print(f"Skipping {task_path.name} as it has already been done")
             continue
 
         if os.path.exists(embed_task_dir):

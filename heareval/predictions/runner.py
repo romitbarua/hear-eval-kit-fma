@@ -115,6 +115,7 @@ def runner(
         done_file = task_path.joinpath("prediction-done.json")
         if done_file.exists():
             # We already did this
+            print(f"Skipping {task_path.name} as it has already been done")
             continue
 
         # Get embedding sizes for all splits/folds

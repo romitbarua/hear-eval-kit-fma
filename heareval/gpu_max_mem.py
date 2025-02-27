@@ -47,7 +47,10 @@ if torch.cuda.is_available():
 
     def device_name(device_index: int = 0) -> str:
         handle = nvmlDeviceGetHandleByIndex(device_index)
-        return nvmlDeviceGetName(handle).decode("utf-8")
+
+        name = nvmlDeviceGetName(handle)
+
+        return name if isinstance(name, str) else name.decode("utf-8")
 
 
 else:

@@ -1166,8 +1166,14 @@ def aggregate_test_results(results: Dict[str, Dict[str, float]]) -> Dict[str, fl
     results_df = pd.DataFrame.from_dict(results, orient="index")
     aggregate_results = {}
     for score in results_df:
+        if not pd.api.types.is_numeric_dtype(results_df[score]):
+            continue
         aggregate_results[f"{score}_mean"] = results_df[score].mean()
         aggregate_results[f"{score}_std"] = results_df[score].std()
+
+    # get the row with the best test score & get the best_model_path
+    best_row = results_df.loc[results_df['test_score'].idxmax()]
+    aggregate_results['best_model_path'] = best_row['best_model_path']
 
     return aggregate_results
 
@@ -1422,14 +1428,18 @@ def task_predictions(
                 "validation_score": split_grid_points[i].validation_score,
                 "epoch": split_grid_points[i].epoch,
                 "time_in_min": split_grid_points[i].time_in_min,
+                'best_model_path': split_grid_points[i].model_path
             }
         )
+        #test_results['model_paths'][test_fold_str] = split_grid_points[i].model_path
+
 
     # Make sure we have a test score for each fold
     assert len(test_results) == len(data_splits)
 
     # Aggregate scores over folds
     if len(test_results) > 1:
+        print('Test Scores', test_results)
         test_results["aggregated_scores"] = aggregate_test_results(test_results)
 
     # Update test results with values relevant for all split models
